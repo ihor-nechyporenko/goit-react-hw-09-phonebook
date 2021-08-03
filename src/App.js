@@ -1,5 +1,5 @@
-import { Component, Suspense, lazy } from "react";
-import { connect } from "react-redux";
+import { Suspense, lazy, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { Switch } from "react-router-dom";
 
 import Header from "./components/Header";
@@ -23,45 +23,36 @@ const ContactsPage = lazy(() =>
   import("./pages/ContactsPage" /* webpackChunkName: "contacts-page" */)
 );
 
-class App extends Component {
-  componentDidMount() {
-    this.props.getCurrentUser();
-  }
+export default function App() {
+  const dispatch = useDispatch();
 
-  render() {
-    return (
-      <>
-        <Header />
+  useEffect(() => {
+    dispatch(authOperations.getCurrentUser());
+  }, [dispatch]);
 
-        <Suspense fallback={<Loader />}>
-          <Switch>
-            <PublicRoute exact path="/" component={HomePage} />
-            <PublicRoute
-              path="/register"
-              restricted
-              redirectTo="/contacts"
-              component={RegisterPage}
-            />
-            <PublicRoute
-              path="/login"
-              restricted
-              redirectTo="/contacts"
-              component={LoginPage}
-            />
-            <PrivateRoute
-              path="/contacts"
-              redirectTo="/login"
-              component={ContactsPage}
-            />
-          </Switch>
-        </Suspense>
-      </>
-    );
-  }
+  return (
+    <>
+      <Header />
+
+      <Suspense fallback={<Loader />}>
+        <Switch>
+          <PublicRoute exact path="/">
+            <HomePage />
+          </PublicRoute>
+
+          <PublicRoute path="/register" restricted redirectTo="/contacts">
+            <RegisterPage />
+          </PublicRoute>
+
+          <PublicRoute path="/login" restricted redirectTo="/contacts">
+            <LoginPage />
+          </PublicRoute>
+
+          <PrivateRoute path="/contacts" redirectTo="/login">
+            <ContactsPage />
+          </PrivateRoute>
+        </Switch>
+      </Suspense>
+    </>
+  );
 }
-
-const mapDispatchToProps = (dispatch) => ({
-  getCurrentUser: () => dispatch(authOperations.getCurrentUser()),
-});
-
-export default connect(null, mapDispatchToProps)(App);

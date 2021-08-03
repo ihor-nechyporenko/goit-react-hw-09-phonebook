@@ -1,9 +1,16 @@
+import { useSelector } from "react-redux";
 import styles from "./Error.module.css";
+import { selectors } from "../../redux/phonebook";
 
-const Error = () => (
-  <h2 className={styles.message}>
-    Ooops! Something went wrong. Please try again later.
-  </h2>
-);
+export default function Error() {
+  const errorMessage = useSelector(selectors.getError);
 
-export default Error;
+  return (
+    <>
+      <h2 className={styles.message}>
+        Ooops! Something went wrong. Please try again later.
+      </h2>
+      <p className={styles.error__descr}>{errorMessage}</p>
+    </>
+  );
+}

@@ -1,4 +1,4 @@
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { CSSTransition } from "react-transition-group";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -24,34 +24,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = ({ isAuthenticated }) => {
+export default function Header() {
   const classes = useStyles();
+  const isAuthenticated = useSelector(authSelectors.getIsAuthenticated);
 
   return (
-    <>
-      <AppBar position="sticky">
-        <Toolbar>
-          <Navigation />
-          <Typography variant="h6" className={classes.title}>
-            <CSSTransition
-              in={true}
-              appear
-              timeout={500}
-              classNames={fadeHeaderStyles}
-              unmountOnExit
-            >
-              <h1 className={styles.title}>Phonebook</h1>
-            </CSSTransition>
-          </Typography>
-          {isAuthenticated ? <UserMenu /> : <AuthNav />}
-        </Toolbar>
-      </AppBar>
-    </>
+    <AppBar position="sticky">
+      <Toolbar>
+        <Navigation />
+        <Typography variant="h6" className={classes.title}>
+          <CSSTransition
+            in={true}
+            appear
+            timeout={500}
+            classNames={fadeHeaderStyles}
+            unmountOnExit
+          >
+            <h1 className={styles.title}>Phonebook</h1>
+          </CSSTransition>
+        </Typography>
+        {isAuthenticated ? <UserMenu /> : <AuthNav />}
+      </Toolbar>
+    </AppBar>
   );
-};
-
-const mapStateToProps = (state) => ({
-  isAuthenticated: authSelectors.getIsAuthenticated(state),
-});
-
-export default connect(mapStateToProps)(Header);
+}
