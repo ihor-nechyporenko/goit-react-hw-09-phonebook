@@ -10,9 +10,11 @@ import styles from "./Form.module.css";
 import fadeStyles from "../Notification/fadeNotification.module.css";
 
 export default function Form() {
-  const [name, setName] = useState("");
-  const [number, setNumber] = useState("");
   const [isContactExists, setIsContactExists] = useState(false);
+  const [user, setUser] = useState({
+    name: "",
+    number: "",
+  });
 
   const dispatch = useDispatch();
   const savedContacts = useSelector(selectors.getContacts);
@@ -20,19 +22,13 @@ export default function Form() {
   const handleChange = useCallback((e) => {
     const { name, value } = e.currentTarget;
 
-    switch (name) {
-      case "name":
-        setName(value);
-        break;
-
-      case "number":
-        setNumber(value);
-        break;
-
-      default:
-        console.warn("There is no input with such name");
-    }
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
   }, []);
+
+  const { name, number } = user;
 
   const handleSubmit = useCallback(
     (e) => {
@@ -54,16 +50,15 @@ export default function Form() {
         return;
       }
 
-      dispatch(operations.addContact(name, number));
+      dispatch(operations.addContact(user));
 
       resetForm();
     },
-    [dispatch, name, number, savedContacts]
+    [dispatch, user, name, savedContacts]
   );
 
   const resetForm = () => {
-    setName("");
-    setNumber("");
+    setUser({ name: "", number: "" });
     setIsContactExists(false);
   };
 

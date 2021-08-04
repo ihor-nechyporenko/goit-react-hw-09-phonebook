@@ -11,7 +11,7 @@ const AuthNav = () => (
           activeClassName={styles.nav__link__active}
           exact
         >
-          Sign in
+          Sign up
         </NavLink>
       </li>
       <li>
